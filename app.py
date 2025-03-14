@@ -27,5 +27,8 @@ def home():
 def get_quote():
     return jsonify({'quote': random.choice(TRUMP_QUOTES)})
 
+# This is the key change for Vercel deployment
+app = app.wsgi_app
+
 if __name__ == '__main__':
     app.run(port=5001)
