@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Typing Speed Test</title>
+    <title>Trump Quotes Typing Test</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #3498DB;
+            --primary: #3498DB;
             --primary-dark: #2980B9;
-            --text-color: #2C3E50;
-            --bg-color: #E8F4F9;
+            --text: #2C3E50;
+            --bg: #E8F4F9;
             --white: #FFFFFF;
         }
 
@@ -22,20 +22,19 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background: var(--bg);
+            color: var(--text);
             line-height: 1.6;
+            padding: 2rem;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 2rem;
         }
 
         .container {
             max-width: 900px;
             width: 100%;
-            margin: 0 auto;
             text-align: center;
         }
 
@@ -66,11 +65,10 @@
             width: 100%;
             padding: 1rem;
             font-size: 1.1rem;
-            border: 2px solid var(--primary-color);
+            border: 2px solid var(--primary);
             border-radius: 8px;
             margin-bottom: 2rem;
-            font-family: 'Inter', sans-serif;
-            transition: all 0.3s ease;
+            font-family: inherit;
         }
 
         .input-area:focus {
@@ -78,25 +76,25 @@
             box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
         }
 
-        .start-btn {
-            background-color: var(--primary-color);
+        .btn {
+            background: var(--primary);
             color: var(--white);
             border: none;
             padding: 1rem 2.5rem;
             font-size: 1.1rem;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: 0.3s ease;
             font-weight: 600;
         }
 
-        .start-btn:hover {
-            background-color: var(--primary-dark);
+        .btn:hover {
+            background: var(--primary-dark);
             transform: translateY(-2px);
         }
 
-        .start-btn:disabled {
-            background-color: #95a5a6;
+        .btn:disabled {
+            background: #95a5a6;
             cursor: not-allowed;
             transform: none;
         }
@@ -116,21 +114,16 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .correct {
-            background-color: #e8f5e9;
-        }
-
-        .incorrect {
-            background-color: #ffebee;
-        }
+        .correct { background: #e8f5e9; }
+        .incorrect { background: #ffebee; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Modern Typing Speed Test</h1>
-        <div id="quote" class="quote-display">Click 'Start' to begin the typing test!</div>
+        <h1>Trump Quotes Typing Test</h1>
+        <div id="quote" class="quote-display">Click 'Start' to begin!</div>
         <textarea id="input" class="input-area" disabled></textarea>
-        <button id="start" class="start-btn">Start Test</button>
+        <button id="start" class="btn">Start Test</button>
         <div class="stats">
             <div class="stat-item">WPM: <span id="wpm">0</span></div>
             <div class="stat-item">Accuracy: <span id="accuracy">0</span>%</div>
@@ -138,90 +131,68 @@
     </div>
 
     <script>
-        let startTime, endTime, quote;
-        const quoteDisplay = document.getElementById('quote');
-        const input = document.getElementById('input');
-        const startButton = document.getElementById('start');
-        const wpmDisplay = document.getElementById('wpm');
-        const accuracyDisplay = document.getElementById('accuracy');
+        const elements = {
+            quote: document.getElementById('quote'),
+            input: document.getElementById('input'),
+            start: document.getElementById('start'),
+            wpm: document.getElementById('wpm'),
+            accuracy: document.getElementById('accuracy')
+        };
 
-        async function getQuote() {
-            const response = await fetch('/get-quote');
-            const data = await response.json();
-            return data.quote;
-        }
+        let startTime, quote;
 
         function calculateWPM(startTime, endTime, text) {
-            const timeInMinutes = (endTime - startTime) / 60000;
+            const minutes = (endTime - startTime) / 60000;
             const words = text.trim().split(/\s+/).length;
-            return Math.round(words / timeInMinutes);
+            return Math.round(words / minutes);
         }
 
         function calculateAccuracy(original, typed) {
-            if (typed.length === 0) return 0;
-            let correct = 0;
-            const minLength = Math.min(original.length, typed.length);
-            
-            for (let i = 0; i < minLength; i++) {
-                if (original[i] === typed[i]) correct++;
-            }
-            
+            if (!typed.length) return 0;
+            const correct = [...original].filter((char, i) => char === typed[i]).length;
             return Math.round((correct / original.length) * 100);
         }
 
-        startButton.addEventListener('click', async () => {
-            if (startButton.textContent === 'Start Test') {
-                quote = await getQuote();
-                quoteDisplay.textContent = quote;
-                input.value = '';
-                input.disabled = false;
-                input.focus();
-                startTime = new Date().getTime();
-                startButton.textContent = 'Stop Test';
+        function updateResults(wpm, accuracy) {
+            elements.wpm.textContent = wpm;
+            elements.accuracy.textContent = accuracy;
+            elements.input.value = '';
+            elements.input.disabled = true;
+            elements.start.textContent = 'Start Test';
+            elements.quote.textContent = `WPM: ${wpm} | Accuracy: ${accuracy}%\nClick 'Start' to try again!`;
+        }
+
+        function updateQuoteDisplay() {
+            const typed = elements.input.value;
+            elements.quote.innerHTML = [...quote].map((char, i) => {
+                const color = i < typed.length ? (char === typed[i] ? 'correct' : 'incorrect') : '';
+                return `<span class="${color}">${char === ' ' ? '&nbsp;' : char}</span>`;
+            }).join('');
+        }
+
+        elements.start.addEventListener('click', async () => {
+            if (elements.start.textContent === 'Start Test') {
+                const response = await fetch('/get-quote');
+                quote = (await response.json()).quote;
+                elements.quote.textContent = quote;
+                elements.input.value = '';
+                elements.input.disabled = false;
+                elements.input.focus();
+                startTime = Date.now();
+                elements.start.textContent = 'Stop Test';
             } else {
-                endTime = new Date().getTime();
-                input.disabled = true;
-                input.value = ''; // Reset input text
-                
-                const wpm = calculateWPM(startTime, endTime, input.value);
-                const accuracy = calculateAccuracy(quote, input.value);
-                
-                wpmDisplay.textContent = wpm;
-                accuracyDisplay.textContent = accuracy;
-                
-                startButton.textContent = 'Start Test';
-                quoteDisplay.textContent = `WPM: ${wpm} | Accuracy: ${accuracy}%\nClick 'Start' to try again!`;
+                const wpm = calculateWPM(startTime, Date.now(), elements.input.value);
+                const accuracy = calculateAccuracy(quote, elements.input.value);
+                updateResults(wpm, accuracy);
             }
         });
 
-        input.addEventListener('input', () => {
-            const arrayQuote = quote.split('');
-            const arrayValue = input.value.split('');
-            
-            quoteDisplay.innerHTML = arrayQuote
-                .map((char, i) => {
-                    let color = '';
-                    if (i < arrayValue.length) {
-                        color = char === arrayValue[i] ? 'correct' : 'incorrect';
-                    }
-                    return `<span class="${color}">${char === ' ' ? '&nbsp;' : char}</span>`;
-                })
-                .join('');
-
-            // Auto-complete when the quote is fully typed correctly
-            if (input.value === quote) {
-                endTime = new Date().getTime();
-                input.disabled = true;
-                input.value = ''; // Reset input text
-                
-                const wpm = calculateWPM(startTime, endTime, input.value);
-                const accuracy = calculateAccuracy(quote, input.value);
-                
-                wpmDisplay.textContent = wpm;
-                accuracyDisplay.textContent = accuracy;
-                
-                startButton.textContent = 'Start Test';
-                quoteDisplay.textContent = `WPM: ${wpm} | Accuracy: ${accuracy}%\nClick 'Start' to try again!`;
+        elements.input.addEventListener('input', () => {
+            updateQuoteDisplay();
+            if (elements.input.value === quote) {
+                const wpm = calculateWPM(startTime, Date.now(), quote);
+                const accuracy = calculateAccuracy(quote, quote);
+                updateResults(wpm, accuracy);
             }
         });
     </script>

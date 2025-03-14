@@ -1,9 +1,7 @@
 from flask import Flask, render_template, jsonify
-from flask_cors import CORS
 import random
 
 app = Flask(__name__)
-CORS(app)
 
 TRUMP_QUOTES = [
     "Despite the negative press covfefe.",
