@@ -3,19 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trump Quotes Typing Test</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>Trump Typing Test</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #FF6B6B;
-            --primary-dark: #FF5252;
-            --text: #2C3E50;
-            --bg: #F0F4F8;
-            --white: #FFFFFF;
-            --quote-bg: #FFFFFF;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --correct: #66BB6A;
-            --incorrect: #EF5350;
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --bg: #f8fafc;
+            --text: #0f172a;
+            --text-light: #64748b;
+            --white: #ffffff;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --correct: #22c55e;
+            --incorrect: #ef4444;
+            --border: #e2e8f0;
         }
 
         * {
@@ -25,180 +28,235 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
-            padding: 2rem;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            -webkit-font-smoothing: antialiased;
         }
 
         .container {
-            max-width: 900px;
-            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .header {
             text-align: center;
+            margin-bottom: 3rem;
         }
 
         h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--primary);
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 2.25rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.75rem;
         }
 
         .subtitle {
-            font-size: 1.1rem;
-            color: var(--text);
+            color: var(--text-light);
+            font-size: 1.125rem;
+        }
+
+        .game-container {
+            background: var(--white);
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+            padding: 2rem;
             margin-bottom: 2rem;
-            opacity: 0.8;
         }
 
         .quote-display {
-            background: var(--quote-bg);
-            padding: 2rem;
-            border-radius: 16px;
-            margin-bottom: 2rem;
             font-size: 1.25rem;
-            box-shadow: var(--shadow);
+            line-height: 1.75;
+            margin-bottom: 2rem;
             min-height: 120px;
             max-height: 200px;
             overflow-y: auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: 0.75rem;
+            background: var(--bg);
             white-space: pre-wrap;
-            border: 2px solid rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
         }
 
-        .quote-display:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        .quote-display::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .quote-display::-webkit-scrollbar-track {
+            background: var(--bg);
+            border-radius: 4px;
+        }
+
+        .quote-display::-webkit-scrollbar-thumb {
+            background: var(--text-light);
+            border-radius: 4px;
         }
 
         .input-area {
             width: 100%;
-            padding: 1rem 1.5rem;
-            font-size: 1.1rem;
-            border: 2px solid var(--primary);
-            border-radius: 12px;
-            margin-bottom: 2rem;
+            padding: 1rem;
+            font-size: 1.125rem;
+            border: 2px solid var(--border);
+            border-radius: 0.75rem;
+            margin-bottom: 1.5rem;
             font-family: inherit;
-            transition: all 0.3s ease;
-            background: var(--white);
+            transition: all 0.2s ease;
+            background: var(--bg);
             color: var(--text);
+            resize: none;
         }
 
         .input-area:focus {
             outline: none;
-            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.3);
-            transform: translateY(-1px);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .input-area::placeholder {
+            color: var(--text-light);
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
 
         .btn {
+            flex: 1;
             background: var(--primary);
             color: var(--white);
             border: none;
-            padding: 1rem 2.5rem;
-            font-size: 1.1rem;
-            border-radius: 12px;
+            padding: 0.875rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 0.75rem;
             cursor: pointer;
-            transition: 0.3s ease;
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: var(--shadow);
+            transition: all 0.2s ease;
         }
 
         .btn:hover {
             background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
         }
 
         .btn:disabled {
-            background: #95a5a6;
+            background: var(--text-light);
             cursor: not-allowed;
             transform: none;
-            box-shadow: none;
         }
 
         .stats {
-            margin-top: 2rem;
-            font-size: 1.2rem;
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
         }
 
         .stat-item {
             background: var(--white);
-            padding: 1.2rem 2rem;
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
-            border: 2px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .stat-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            text-align: center;
         }
 
         .stat-label {
-            font-weight: 500;
-            color: var(--primary);
+            display: block;
+            font-size: 0.875rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
         }
 
         .correct { 
             color: var(--correct);
-            background: rgba(102, 187, 106, 0.1);
         }
         
         .incorrect { 
             color: var(--incorrect);
-            background: rgba(239, 83, 80, 0.1);
         }
 
-        @media (max-width: 600px) {
-            body {
+        @media (max-width: 640px) {
+            .container {
                 padding: 1rem;
             }
 
             h1 {
-                font-size: 2rem;
+                font-size: 1.875rem;
             }
 
-            .quote-display {
-                font-size: 1.1rem;
+            .game-container {
                 padding: 1.5rem;
             }
 
-            .stats {
-                flex-direction: column;
-                gap: 1rem;
+            .quote-display {
+                font-size: 1.125rem;
             }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        .result-message {
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 1rem 0;
+            color: var(--primary);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Trump Quotes Typing Test</h1>
-        <p class="subtitle">How fast can you type The Donald's greatest hits?</p>
-        <div id="quote" class="quote-display">Click 'Start' to begin!</div>
-        <textarea id="input" class="input-area" disabled placeholder="Start typing here..."></textarea>
-        <button id="start" class="btn">Start Test</button>
+        <div class="header">
+            <h1>Trump Typing Test</h1>
+            <p class="subtitle">Can you keep up with The Donald?</p>
+        </div>
+        
+        <div class="game-container">
+            <div id="quote" class="quote-display">Click 'Start' to begin!</div>
+            <textarea 
+                id="input" 
+                class="input-area" 
+                rows="3"
+                disabled 
+                placeholder="The words will appear above. Type them here..."
+            ></textarea>
+            <div class="controls">
+                <button id="start" class="btn">Start Test</button>
+                <button id="reset" class="btn" style="display: none;">Reset</button>
+            </div>
+        </div>
+
         <div class="stats">
             <div class="stat-item">
-                <span class="stat-label">WPM:</span> <span id="wpm">0</span>
+                <span class="stat-label">Words per Minute</span>
+                <span id="wpm" class="stat-value">0</span>
             </div>
             <div class="stat-item">
-                <span class="stat-label">Accuracy:</span> <span id="accuracy">0</span>%
+                <span class="stat-label">Accuracy</span>
+                <span id="accuracy" class="stat-value">0%</span>
             </div>
         </div>
     </div>
@@ -208,6 +266,7 @@
             quote: document.getElementById('quote'),
             input: document.getElementById('input'),
             start: document.getElementById('start'),
+            reset: document.getElementById('reset'),
             wpm: document.getElementById('wpm'),
             accuracy: document.getElementById('accuracy')
         };
@@ -226,13 +285,29 @@
             return Math.round((correct / original.length) * 100);
         }
 
-        function updateResults(wpm, accuracy) {
+        function showResult(wpm, accuracy) {
             elements.wpm.textContent = wpm;
-            elements.accuracy.textContent = accuracy;
+            elements.accuracy.textContent = `${accuracy}%`;
             elements.input.value = '';
             elements.input.disabled = true;
+            elements.start.style.display = 'none';
+            elements.reset.style.display = 'block';
+            elements.quote.innerHTML = `
+                <div class="result-message">
+                    Great job! You typed at ${wpm} WPM with ${accuracy}% accuracy.
+                </div>
+            `;
+        }
+
+        function resetGame() {
+            elements.quote.textContent = "Click 'Start' to begin!";
+            elements.wpm.textContent = '0';
+            elements.accuracy.textContent = '0%';
+            elements.input.value = '';
+            elements.input.disabled = true;
+            elements.start.style.display = 'block';
+            elements.reset.style.display = 'none';
             elements.start.textContent = 'Start Test';
-            elements.quote.textContent = `WPM: ${wpm} | Accuracy: ${accuracy}%\nClick 'Start' to try again!`;
         }
 
         function updateQuoteDisplay() {
@@ -256,16 +331,18 @@
             } else {
                 const wpm = calculateWPM(startTime, Date.now(), elements.input.value);
                 const accuracy = calculateAccuracy(quote, elements.input.value);
-                updateResults(wpm, accuracy);
+                showResult(wpm, accuracy);
             }
         });
+
+        elements.reset.addEventListener('click', resetGame);
 
         elements.input.addEventListener('input', () => {
             updateQuoteDisplay();
             if (elements.input.value === quote) {
                 const wpm = calculateWPM(startTime, Date.now(), quote);
                 const accuracy = calculateAccuracy(quote, quote);
-                updateResults(wpm, accuracy);
+                showResult(wpm, accuracy);
             }
         });
     </script>
