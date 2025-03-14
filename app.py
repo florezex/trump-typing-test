@@ -1,7 +1,6 @@
 from flask import Flask, render_template, jsonify
 from flask_cors import CORS
 import random
-import time
 
 app = Flask(__name__)
 CORS(app)
@@ -26,9 +25,6 @@ def home():
 @app.route('/get-quote')
 def get_quote():
     return jsonify({'quote': random.choice(TRUMP_QUOTES)})
-
-# This is the key change for Vercel deployment
-app = app.wsgi_app
 
 if __name__ == '__main__':
     app.run(port=5001)

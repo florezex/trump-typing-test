@@ -53,9 +53,13 @@
             font-size: 1.25rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             min-height: 120px;
+            max-height: 200px;
+            overflow-y: auto;
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 100%;
+            white-space: pre-wrap;
         }
 
         .input-area {
@@ -177,6 +181,7 @@
             } else {
                 endTime = new Date().getTime();
                 input.disabled = true;
+                input.value = ''; // Reset input text
                 
                 const wpm = calculateWPM(startTime, endTime, input.value);
                 const accuracy = calculateAccuracy(quote, input.value);
@@ -207,6 +212,7 @@
             if (input.value === quote) {
                 endTime = new Date().getTime();
                 input.disabled = true;
+                input.value = ''; // Reset input text
                 
                 const wpm = calculateWPM(startTime, endTime, input.value);
                 const accuracy = calculateAccuracy(quote, input.value);
