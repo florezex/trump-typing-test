@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Typing Speed Test</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3498DB;
+            --primary-dark: #2980B9;
+            --text-color: #2C3E50;
+            --bg-color: #E8F4F9;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
+        .quote-display {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .input-area {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.1rem;
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .input-area:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
+        }
+
+        .start-btn {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .start-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .start-btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .stats {
+            margin-top: 2rem;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .stat-item {
+            background: var(--white);
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .correct {
+            background-color: #e8f5e9;
+        }
+
+        .incorrect {
+            background-color: #ffebee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Modern Typing Speed Test</h1>
+        <div id="quote" class="quote-display">Click 'Start' to begin the typing test!</div>
+        <textarea id="input" class="input-area" disabled></textarea>
+        <button id="start" class="start-btn">Start Test</button>
+        <div class="stats">
+            <div class="stat-item">WPM: <span id="wpm">0</span></div>
+            <div class="stat-item">Accuracy: <span id="accuracy">0</span>%</div>
+        </div>
+    </div>
+
+    <script>
+        let startTime, endTime, quote;
+        const quoteDisplay = document.getElementById('quote');
+        const input = document.getElementById('input');
+        const startButton = document.getElementById('start');
+        const wpmDisplay = document.getElementById('wpm');
+        const accuracyDisplay = document.getElementById('accuracy');
+
+        async function getQuote() {
+            const response = await fetch('/get-quote');
+            const data = await response.json();
+            return data.quote;
+        }
+
+        function calculateWPM(startTime, endTime, text) {
+            const timeInMinutes = (endTime - startTime) / 60000;
+            const words = text.trim().split(/\s+/).length;
+            return Math.round(words / timeInMinutes);
+        }
+
+        function calculateAccuracy(original, typed) {
+            if (typed.length === 0) return 0;
+            let correct = 0;
+            const minLength = Math.min(original.length, typed.length);
+            
+            for (let i = 0; i < minLength; i++) {
+                if (original[i] === typed[i]) correct++;
+            }
+            
+            return Math.round((correct / original.length) * 100);
+        }
+
+        startButton.addEventListener('click', async () => {
+            if (startButton.textContent === 'Start Test') {
+                quote = await getQuote();
+                quoteDisplay.textContent = quote;
+                input.value = '';
+                input.disabled = false;
+                input.focus();
+                startTime = new Date().getTime();
+                startButton.textContent = 'Stop Test';
+            } else {
+                endTime = new Date().getTime();
+                input.disabled = true;
+                
+                const wpm = calculateWPM(startTime, endTime, input.value);
+                const accuracy = calculateAccuracy(quote, input.value);
+                
+                wpmDisplay.textContent = wpm;
+                accuracyDisplay.textContent = accuracy;
+                
+                startButton.textContent = 'Start Test';
+                quoteDisplay.textContent = `WPM: ${wpm} | Accuracy: ${accuracy}%\nClick 'Start' to try again!`;
+            }
+        });
+
+        input.addEventListener('input', () => {
+            const arrayQuote = quote.split('');
+            const arrayValue = input.value.split('');
+            
+            quoteDisplay.innerHTML = arrayQuote
+                .map((char, i) => {
+                    let color = '';
+                    if (i < arrayValue.length) {
+                        color = char === arrayValue[i] ? 'correct' : 'incorrect';
+                    }
+                    return `<span class="${color}">${char === ' ' ? '&nbsp;' : char}</span>`;
+                })
+                .join('');
+
+            // Auto-complete when the quote is fully typed correctly
+            if (input.value === quote) {
+                endTime = new Date().getTime();
+                input.disabled = true;
+                
+                const wpm = calculateWPM(startTime, endTime, input.value);
+                const accuracy = calculateAccuracy(quote, input.value);
+                
+                wpmDisplay.textContent = wpm;
+                accuracyDisplay.textContent = accuracy;
+                
+                startButton.textContent = 'Start Test';
+                quoteDisplay.textContent = `WPM: ${wpm} | Accuracy: ${accuracy}%\nClick 'Start' to try again!`;
+            }
+        });
+    </script>
+</body>
+</html>
