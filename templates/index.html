@@ -68,6 +68,7 @@
             margin-bottom: 2rem;
             position: relative;
             width: 100%;
+            overflow: hidden;
         }
 
         .quote-container {
@@ -76,6 +77,7 @@
             border-radius: 0.75rem;
             margin-bottom: 2rem;
             width: 100%;
+            overflow: hidden;
         }
 
         .quote-display {
@@ -87,6 +89,24 @@
             padding: 1.5rem;
             white-space: pre-wrap;
             word-break: break-word;
+            overflow-x: hidden;
+        }
+
+        .quote-display::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .quote-display::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+
+        .quote-display::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        .quote-display::-webkit-scrollbar-thumb:hover {
+            background: var(--text-light);
         }
 
         .input-area {
